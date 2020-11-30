@@ -4,23 +4,164 @@
     <meta charset="utf-8" />
     <title>Gamedev Canvas Workshop</title>
     <style>
-    	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; }
+    	* { padding: 0; margin: 0; color:gray}
+    	canvas { background: rgb(80, 77, 77); display: block; margin: 0 auto; }
     </style>
 </head>
 <body>
 
-<canvas id="myCanvas" width="480" height="320"></canvas>
+<canvas id="myCanvas" width="500" height="500"></canvas>
 
 <script>
 	var canvas = document.getElementById("myCanvas");
     var ctx = canvas.getContext("2d");
 
-    ctx.beginPath();
-    ctx.rect(20, 40, 50, 50);
-    ctx.fillStyle = "#FF0000";
-    ctx.fill();
-    ctx.closePath();
+    //circle center position
+    var circle_center_x = canvas.width/2; 
+    var circle_center_y = canvas.height/2;
+
+    //angle and radius of a circle
+    var angle = 0;
+    var dangle = 1;
+
+    const surfaceRadius = 100;
+    var radius = 100;
+
+    //user input
+    var spacebarPressed = false;
+    var spacebarHold = false;
+
+    var offset = 0;
+    var score = 0;
+    var highScore = 0;
+
+    function update() {
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        x = circle_center_x + radius * Math.cos(angle * (Math.PI/180));
+        y = circle_center_y + radius * Math.sin(angle * (Math.PI/180));
+
+        var x_port = circle_center_x + radius * Math.cos((angle+180) * (Math.PI/180));
+        var y_port = circle_center_y + radius * Math.sin((angle+180) * (Math.PI/180));
+
+        if (spacebarPressed && !spacebarHold){
+            angle += 180;
+            spacebarHold = true;
+        }
+
+        if(angle > 360){
+                angle -= 360;
+        }
+
+        if (!spacebarPressed){
+            spacebarHold = false;
+        }
+
+        showScore(x, y);
+        drawBall(x, y, 'white');
+        drawSurface('black');
+        drawAnimatedLine(x, y, x_port, y_port, 'white');
+
+        angle += 1;
+
+        if(((x == circle_center_x + radius * Math.cos(30*(Math.PI/180))) && (y == circle_center_y + radius * Math.sin(30*(Math.PI/180)))) ||
+        ((x == circle_center_x + radius * Math.cos(150*(Math.PI/180))) && (y == circle_center_y + radius * Math.sin(150*(Math.PI/180)))) ||
+        ((x == circle_center_x + radius * Math.cos(270*(Math.PI/180))) && (y == circle_center_y + radius * Math.sin(270*(Math.PI/180))))){
+            if(score>highScore){
+                setHighScore();
+            }
+            angle = 0;
+            dangle = 1;
+            score = 0;
+        }
+
+        setTimeout(update, 33);
+    }
+
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if(e.keyCode == 32) {
+            spacebarPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if(e.keyCode == 32) {
+            spacebarPressed = false;
+        }
+    }
+
+    function drawSurface(color){
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI*2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        circle_center_y + radius * Math.sin(angle * (Math.PI/180))
+        ctx.arc(circle_center_x + radius * Math.cos(30*(Math.PI/180)), circle_center_y + radius * Math.sin(30*(Math.PI/180)), 10, 0, Math.PI*2);
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.arc(circle_center_x + radius * Math.cos(150*(Math.PI/180)), circle_center_y + radius * Math.sin(150*(Math.PI/180)), 10, 0, Math.PI*2);
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.arc(circle_center_x + radius * Math.cos(270*(Math.PI/180)), circle_center_y + radius * Math.sin(270*(Math.PI/180)), 10, 0, Math.PI*2);
+        ctx.fill();
+    }
+
+    function drawBall(x, y, color){
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI*2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
+    }
+    
+    function drawLine(x1, y1, x2, y2, color){
+        ctx.beginPath();
+        ctx.setLineDash([4, 2]);
+        ctx.lineDashOffset = -offset;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = color;
+        ctx.stroke();
+        ctx.beginPath();
+    }
+
+    function drawAnimatedLine(x1, y1, x2, y2, color){
+        offset++;
+        if (offset > 16) {
+            offset = 0;
+        }
+        drawLine(x1, y1, x2, y2, color);;
+    }
+
+    function addScore(){
+        score++;
+    }
+
+    function showScore(x, y){
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#0095DD";
+        ctx.fillText("Score: "+score, 8, 20);
+        ctx.fillText("Acceleration: "+dangle.toFixed(2), 8, 40);
+        ctx.fillText("Highest Score: "+highScore, 8, 60);
+        ctx.fillText("Angle: "+angle, 8, 80);
+    }
+
+    function setHighScore(){
+        highScore = score;
+    }
+
+    update();
+    setInterval(addScore, 1000)
+
 
 </script>
 
