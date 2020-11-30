@@ -22,7 +22,6 @@
 
     //angle and radius of a circle
     var angle = 0;
-    var dangle = 1;
 
     const surfaceRadius = 100;
     var radius = 100;
@@ -150,9 +149,7 @@
         ctx.font = "16px Arial";
         ctx.fillStyle = "#0095DD";
         ctx.fillText("Score: "+score, 8, 20);
-        ctx.fillText("Acceleration: "+dangle.toFixed(2), 8, 40);
         ctx.fillText("Highest Score: "+highScore, 8, 60);
-        ctx.fillText("Angle: "+angle, 8, 80);
     }
 
     function setHighScore(){
