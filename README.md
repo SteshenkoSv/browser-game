@@ -1,7 +1,7 @@
 # js-browser-game
 A browser game made with JavaScript, CSS and HTML
 
-Play it here: https://steshenkosv.github.io/js-browser-game/
+Play it here: https://bigslav.github.io/js-browser-game/
 
 Press Spacebar to appear on the other side of a circle. Avoid obstacles.
 
